@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Travel Planner - AI Day Trip Itinerary Generator</title>
+  <meta name="description" content="Enter a city and your interests to generate a personalized day trip itinerary.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <!-- Markdown Renderer -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- HTML to PDF Generator -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+  <!-- Ambient Animated Glowing Background Orbs -->
+  <div class="ambient-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-badge">
+        <span class="pulse-dot"></span>
+        <span class="icon plane-icon">✈️</span>
+        <span class="badge-text">Smart Day Trip Planner</span>
+      </div>
+      <h1 class="title">
+        Smart Travel Planner
+      </h1>
+      <p class="subtitle">Enter a city and your interests to generate a personalized day trip itinerary.</p>
+    </header>
+
+    <main class="main-container">
+      <!-- Planner Form Card -->
+      <section class="card form-card">
+        <form id="planner-form" onsubmit="return false;">
+          
+          <!-- City Input -->
+          <div class="form-group">
+            <label for="city-input" class="form-label">
+              <span class="label-icon">📍</span>
+              Enter the city for your day trip
+            </label>
+            <div class="input-wrapper">
+              <input 
+                type="text" 
+                id="city-input" 
+                class="form-control" 
+                placeholder="e.g. Hyderabad, Tokyo, Paris, New York, Rome" 
+                required 
+                autocomplete="off"
+              />
+              <span class="input-glow"></span>
+            </div>
+            <!-- Quick Cities -->
+            <div class="quick-chips">
+              <span class="quick-label">Popular:</span>
+              <button type="button" class="chip chip-city" data-city="Hyderabad">Hyderabad</button>
+              <button type="button" class="chip chip-city" data-city="Tokyo">Tokyo</button>
+              <button type="button" class="chip chip-city" data-city="Paris">Paris</button>
+              <button type="button" class="chip chip-city" data-city="New York">New York</button>
+              <button type="button" class="chip chip-city" data-city="Rome">Rome</button>
+              <button type="button" class="chip chip-city" data-city="Bali">Bali</button>
+            </div>
+          </div>
+
+          <!-- Interests Input -->
+          <div class="form-group">
+            <label for="interests-input" class="form-label">
+              <span class="label-icon">🎯</span>
+              Enter your interests (comma-separated)
+            </label>
+            <div class="input-wrapper">
+              <input 
+                type="text" 
+                id="interests-input" 
+                class="form-control" 
+                placeholder="e.g. food, history, architecture, street markets, photography" 
+                required 
+                autocomplete="off"
+              />
+              <span class="input-glow"></span>
+            </div>
+            <!-- Quick Interest Tags -->
+            <div class="quick-chips" id="interest-chips">
+              <span class="quick-label">Click to add:</span>
+              <button type="button" class="chip chip-interest" data-interest="food">🍜 Food & Dining</button>
+              <button type="button" class="chip chip-interest" data-interest="history">🏛️ History</button>
+              <button type="button" class="chip chip-interest" data-interest="art & culture">🎨 Art & Culture</button>
+              <button type="button" class="chip chip-interest" data-interest="nature & parks">🌳 Nature</button>
+              <button type="button" class="chip chip-interest" data-interest="shopping">🛍️ Shopping</button>
+              <button type="button" class="chip chip-interest" data-interest="photography">📸 Photography</button>
+              <button type="button" class="chip chip-interest" data-interest="hidden gems">💎 Hidden Gems</button>
+            </div>
+          </div>
+
+          <!-- Options row (Duration & Pace) -->
+          <div class="form-row">
+            <div class="form-group col">
+              <label for="duration-select" class="form-label">
+                <span class="label-icon">⏱️</span>
+                Trip Duration
+              </label>
+              <select id="duration-select" class="form-select">
+                <option value="1 Day" selected>1 Day Trip (Full Day)</option>
+                <option value="Half Day">Half Day (4-5 hours)</option>
+                <option value="Weekend 2 Days">Weekend (2 Days)</option>
+                <option value="3 Days">3 Days Getaway</option>
+              </select>
+            </div>
+
+            <div class="form-group col">
+              <label for="pace-select" class="form-label">
+                <span class="label-icon">🚶</span>
+                Pace
+              </label>
+              <select id="pace-select" class="form-select">
+                <option value="Balanced" selected>Balanced (Standard)</option>
+                <option value="Relaxed">Relaxed (Chilled out)</option>
+                <option value="Fast-paced">Packed (See everything)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Advanced / Optional API Key Accordion -->
+          <div class="advanced-settings">
+            <button type="button" class="toggle-btn" id="toggle-settings-btn">
+              <span class="gear-icon">⚙️</span>
+              <span>Advanced Settings (Gemini / Groq API Key)</span>
+              <span class="chevron" id="settings-chevron">▾</span>
+            </button>
+            <div class="settings-content" id="settings-content">
+              <div class="form-group mb-0">
+                <label for="custom-key-input" class="form-label sub-label">
+                  Custom API Key (Google Gemini or Groq)
+                </label>
+                <input 
+                  type="password" 
+                  id="custom-key-input" 
+                  class="form-control" 
+                  placeholder="Paste AIzaSy... (Gemini) or gsk_... (Groq)" 
+                  autocomplete="off"
+                />
+                <small class="help-text">Leave blank to use default server key. Supports Google Gemini &amp; Groq with auto-detection.</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="form-actions">
+            <button type="submit" id="generate-btn" class="btn btn-primary">
+              <span class="btn-shine"></span>
+              <span class="btn-text">Generate Itinerary</span>
+              <span class="btn-icon">⚡</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Interactive Multi-Step Journey Loading State -->
+      <section class="card loading-card" id="loading-card" style="display: none;">
+        <!-- Animated Flight Path Graphic -->
+        <div class="flight-container">
+          <div class="flight-track">
+            <div class="flight-plane">✈️</div>
+            <div class="flight-cloud cloud-1">☁️</div>
+            <div class="flight-cloud cloud-2">☁️</div>
+          </div>
+        </div>
+
+        <h3 class="loading-title">Crafting your custom itinerary...</h3>
+        
+        <!-- Live Journey Step Progress -->
+        <div class="steps-progress" id="steps-progress">
+          <div class="step-item active" data-step="0">
+            <span class="step-bullet">📍</span>
+            <span class="step-text">Locating top sights & heritage points...</span>
+          </div>
+          <div class="step-item" data-step="1">
+            <span class="step-bullet">⏱️</span>
+            <span class="step-text">Organizing morning, afternoon & evening timeline...</span>
+          </div>
+          <div class="step-item" data-step="2">
+            <span class="step-bullet">🍜</span>
+            <span class="step-text">Handpicking authentic local food & must-taste delicacies...</span>
+          </div>
+          <div class="step-item" data-step="3">
+            <span class="step-bullet">💡</span>
+            <span class="step-text">Adding insider transit advice & budget tips...</span>
+          </div>
+          <div class="step-item" data-step="4">
+            <span class="step-bullet">✨</span>
+            <span class="step-text">Finalizing your personalized plan...</span>
+          </div>
+        </div>
+
+        <p class="loading-quote" id="loading-quote">"Traveling – it leaves you speechless, then turns you into a storyteller."</p>
+      </section>
+
+      <!-- Error Card -->
+      <section class="card error-card" id="error-card" style="display: none;">
+        <div class="error-icon">⚠️</div>
+        <div class="error-content">
+          <h4 class="error-title" id="error-title">Generation Error</h4>
+          <p class="error-message" id="error-message">Something went wrong. Please check your inputs or API key.</p>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="dismiss-error-btn">Dismiss</button>
+      </section>
+
+      <!-- Output Result Card -->
+      <section class="card result-card" id="result-card" style="display: none;">
+        <div class="result-header">
+          <div class="result-meta">
+            <span class="result-badge" id="result-destination-badge">📍 Hyderabad</span>
+            <span class="result-badge badge-duration" id="result-duration-badge">⏱️ 1 Day</span>
+            <span class="result-badge badge-curated" id="result-curated-badge">✨ AI Curated</span>
+          </div>
+          <div class="result-actions">
+            <!-- Download PDF Button -->
+            <button type="button" class="btn-tool btn-tool-primary" id="download-pdf-btn" title="Download itinerary as PDF">
+              <span class="tool-icon">📥</span> Download PDF
+            </button>
+            <button type="button" class="btn-tool" id="copy-btn" title="Copy to clipboard">
+              <span class="tool-icon">📋</span> Copy
+            </button>
+            <button type="button" class="btn-tool" id="print-btn" title="Print itinerary">
+              <span class="tool-icon">🖨️</span> Print
+            </button>
+            <button type="button" class="btn-tool" id="reset-btn" title="Plan another trip">
+              <span class="tool-icon">🔄</span> New Trip
+            </button>
+          </div>
+        </div>
+
+        <!-- Printable & Exportable Itinerary Container -->
+        <div id="printable-area">
+          <div class="pdf-branding" id="pdf-branding" style="display: none;">
+            <div class="pdf-header-bar">
+              <div class="pdf-logo">✈️ SMART TRAVEL PLANNER</div>
+              <div class="pdf-date" id="pdf-date"></div>
+            </div>
+            <div class="pdf-summary-bar">
+              <span id="pdf-city"></span> • <span id="pdf-duration"></span> • <span id="pdf-interests"></span>
+            </div>
+          </div>
+          
+          <div class="itinerary-output markdown-body" id="itinerary-content">
+            <!-- Rendered AI Output will appear here with timeline nodes -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>© 2026 Smart Travel Planner • Personalized Day Trip Itineraries</p>
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">Copied to clipboard!</div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
