@@ -6,9 +6,9 @@
 
 Plan smarter. Explore more. Travel your way.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Project-FFC107?style=for-the-badge&logo=vercel&logoColor=black)](YOUR_DEPLOYED_PROJECT_LINK)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Project-FFC107?style=for-the-badge&logo=vercel&logoColor=black)](https://ai-trip-planner-11.vercel.app/)
 
-**🌐 Deployed Application:** [Click here to explore](YOUR_DEPLOYED_PROJECT_LINK)
+**🌐 Deployed Application:** [Click here to explore](https://ai-trip-planner-11.vercel.app/)
 
 </div>
 
